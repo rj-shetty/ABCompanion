@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ABCompanion</title>
+    <link rel="stylesheet" href="../common/ui.css" />
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <!-- Icon sprite. Inline SVG is the only way to get real icons into an MV3
+         page without a fetch or a font: no network, no CSP exception. Shapes are
+         stroked in currentColor, so hover and active states need no second copy. -->
+    <svg hidden aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="ic-plus" viewBox="0 0 24 24">
+        <path d="M12 5.5v13M5.5 12h13" />
+      </symbol>
+      <symbol id="ic-settings" viewBox="0 0 24 24">
+        <path d="M19.14 12.94a7.98 7.98 0 0 0 0-1.88l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7.28 7.28 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.23-1.14.55-1.63.94l-2.39-.96a.5.5 0 0 0-.61.22L3.14 8.84a.5.5 0 0 0 .12.64l2.03 1.58a7.98 7.98 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .61.22l2.39-.96c.49.39 1.04.71 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.54c.59-.23 1.14-.55 1.63-.94l2.39.96a.5.5 0 0 0 .61-.22l1.92-3.32a.5.5 0 0 0-.12-.64z" />
+        <circle cx="12" cy="12" r="3" />
+      </symbol>
+      <symbol id="ic-stop" viewBox="0 0 24 24">
+        <rect x="7" y="7" width="10" height="10" rx="2" />
+      </symbol>
+      <symbol id="ic-chevron-down" viewBox="0 0 24 24">
+        <path d="M6 9.5l6 6 6-6" />
+      </symbol>
+      <symbol id="ic-alert" viewBox="0 0 24 24">
+        <path d="M10.6 4.2 2.9 17.9A1.6 1.6 0 0 0 4.3 20.3h15.4a1.6 1.6 0 0 0 1.4-2.4L13.4 4.2a1.6 1.6 0 0 0-2.8 0z" />
+        <path d="M12 9.5v4M12 17h.01" />
+      </symbol>
+      <symbol id="ic-shield" viewBox="0 0 24 24">
+        <path d="M12 3.2l7.8 2.8v5.6c0 4.8-3.3 7.9-7.8 8.7-4.5-.8-7.8-3.9-7.8-8.7V6z" />
+        <path d="M9.3 12.1l2 2 3.4-3.6" />
+      </symbol>
+      <symbol id="ic-ban" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8.2" />
+        <path d="M6.2 17.8 17.8 6.2" />
+      </symbol>
+      <symbol id="ic-dot" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3.4" />
+      </symbol>
+      <symbol id="ic-play" viewBox="0 0 24 24">
+        <path d="M8 5.2l11 6.8-11 6.8z" fill="currentColor" stroke="none" />
+      </symbol>
+      <symbol id="ic-arrow-right" viewBox="0 0 24 24">
+        <path d="M9 6l6 6-6 6" />
+      </symbol>
+      <symbol id="ic-send" viewBox="0 0 24 24">
+        <path d="M12 19V5M5.5 11.5 12 5l6.5 6.5" />
+      </symbol>
+      <symbol id="ic-history" viewBox="0 0 24 24">
+        <path d="M4.5 12a7.5 7.5 0 1 0 2.4-5.5" />
+        <path d="M4.2 4.8v3.4h3.4" />
+        <path d="M12 8.2v4.1l2.7 1.7" />
+      </symbol>
+      <symbol id="ic-pencil" viewBox="0 0 24 24">
+        <path d="M14.5 5.5l4 4L9 19H5v-4z" />
+        <path d="M12.5 7.5l4 4" />
+      </symbol>
+      <symbol id="ic-trash" viewBox="0 0 24 24">
+        <path d="M4.5 7h15M10 4.5h4M6.5 7l.8 11.2a1.5 1.5 0 0 0 1.5 1.3h6.4a1.5 1.5 0 0 0 1.5-1.3L17.5 7" />
+        <path d="M10 10.5v6M14 10.5v6" />
+      </symbol>
+    </svg>
+
+    <header class="topbar">
+      <div class="brand">
+        <img src="../../icons/icon48.png" alt="" width="20" height="20" />
+        <span>ABCompanion</span>
+      </div>
+      <div class="topbar-actions">
+        <button id="history-btn" class="icon-btn" title="Chat history" aria-label="Chat history"
+                aria-haspopup="dialog" aria-expanded="false" aria-controls="hist-menu">
+          <svg class="ic"><use href="#ic-history" /></svg>
+        </button>
+        <button id="new-chat" class="icon-btn" title="New chat" aria-label="New chat">
+          <svg class="ic"><use href="#ic-plus" /></svg>
+        </button>
+        <button id="open-settings" class="icon-btn" title="Settings" aria-label="Settings" aria-pressed="false">
+          <svg class="ic"><use href="#ic-settings" /></svg>
+        </button>
+      </div>
+      <!-- Its own line: at 360px the brand and three buttons leave too little
+           room beside them for a model id to be readable. -->
+      <div id="model-line" class="model-line" hidden>
+        <button type="button" id="model-chip" class="chip model-chip"><span class="mc-model"></span><span class="mc-sep" aria-hidden="true">·</span><span class="mc-provider"></span></button>
+      </div>
+    </header>
+
+    <!-- A non-modal dialog, not a menu: rows hold several buttons and an inline
+         rename field. Only .hist-body is re-rendered, so the status line stays
+         put and screen readers announce it. -->
+    <div id="hist-menu" class="history-popover hist-menu" role="dialog" aria-label="Chat history" tabindex="-1" hidden>
+      <div class="hist-body"></div>
+      <p class="hist-status" role="status"></p>
+    </div>
+    <div id="status-bar" class="status-bar" hidden></div>
+
+    <div class="messages-wrap">
+      <main id="messages" class="messages" aria-live="polite">
+        <!-- One quiet question, anchored just above the composer so the eye
+             lands where the typing happens. -->
+        <div id="empty-state" class="empty-state">
+          <h1 class="empty-title">What should I do on this page?</h1>
+          <ul class="examples" aria-label="Suggestions">
+            <li data-example="Summarize this page in 5 bullet points."><button type="button"><svg class="ic" aria-hidden="true"><use href="#ic-arrow-right" /></svg>Summarize this page in 5 bullets</button></li>
+            <li data-example="Find the main contact email on this page."><button type="button"><svg class="ic" aria-hidden="true"><use href="#ic-arrow-right" /></svg>Find the contact email</button></li>
+            <li data-example="Fill in my name as 'Alex Doe' in the form on this page, but do not submit it."><button type="button"><svg class="ic" aria-hidden="true"><use href="#ic-arrow-right" /></svg>Fill a form (no submit)</button></li>
+          </ul>
+          <p id="not-configured" class="warn" hidden>
+            <svg class="ic"><use href="#ic-alert" /></svg>
+            <span>No model configured yet. <a href="#" id="setup-link">Open Settings</a> to add one.</span>
+          </p>
+        </div>
+      </main>
+      <button type="button" id="jump-latest" class="jump-latest" hidden>
+        Jump to latest
+        <svg class="ic"><use href="#ic-chevron-down" /></svg>
+      </button>
+    </div>
+
+    <form id="composer" class="composer">
+      <div id="slash-menu" class="slash-menu" hidden></div>
+      <div id="site-menu" class="site-menu" hidden></div>
+      <!-- The current approval mode stays visible; click it to choose another. -->
+      <div class="composer-field">
+        <textarea id="input" rows="2" placeholder="Ask about or act on this page…"></textarea>
+        <div class="composer-bar">
+          <div class="approval-controls">
+            <span class="composer-label" aria-hidden="true">Approval</span>
+            <div id="autonomy" class="approval-picker">
+              <button type="button" id="autonomy-trigger" class="approval-trigger"
+                      aria-label="Approval mode: Ask" aria-expanded="false"
+                      aria-controls="autonomy-menu" title="Choose approval mode">
+                <span id="autonomy-current">Ask</span>
+                <svg class="ic" aria-hidden="true"><use href="#ic-chevron-down" /></svg>
+              </button>
+              <div id="autonomy-menu" class="approval-menu" role="group" aria-label="Approval mode" hidden>
+                <button type="button" class="seg" data-mode="plan" aria-pressed="false"
+                        title="Plan first: I outline the steps and wait for your approval before acting (safest)">Plan</button>
+                <button type="button" class="seg" data-mode="ask" aria-pressed="false"
+                        title="Ask first: I confirm before acting on a new site — allow once, always, or decline">Ask</button>
+                <button type="button" class="seg" data-mode="auto" aria-pressed="false"
+                        title="Don't ask: I act without prompting on allowed sites (sensitive sites still confirm)">Auto</button>
+              </div>
+            </div>
+          </div>
+          <div class="composer-actions">
+            <button type="button" id="context-hint" class="site-chip" title="Site rules for this page" aria-haspopup="dialog" aria-expanded="false" aria-controls="site-menu" hidden></button>
+            <div class="composer-buttons">
+              <button type="button" id="stop-btn" class="stop-btn" hidden>
+                <svg class="ic"><use href="#ic-stop" /></svg>
+                Stop
+              </button>
+              <button type="submit" id="send-btn" class="send-btn btn" aria-label="Send" title="Send (Enter)">
+                <svg class="ic" aria-hidden="true"><use href="#ic-send" /></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <script type="module" src="sidepanel.js"></script>
+  </body>
+</html>

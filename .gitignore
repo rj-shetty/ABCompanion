@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build artifacts / packaged extension
+*.zip
+dist/
+web-ext-artifacts/
+
+# Raw (unframed) screenshot intermediates — only the composed 01/02/03 are tracked
+assets/screenshots/raw-*.png
+
+# Demo recording intermediates — only the composed assets/demo.gif is tracked
+assets/demo-raw/
+assets/demo-frames/
+
+# Local secrets — never commit API keys
+*.local
+.env
+.env.*
+secrets.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Feature-video recording intermediates — only assets/feature-tour.mp4 is tracked
+assets/video-raw/
+
+# Maintainer decision log — local only, the public repo stays end-user-facing
+.decisions/

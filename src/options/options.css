@@ -1,0 +1,679 @@
+/* Settings page layout and page-specific components.
+   Shared colors, type, focus and controls come from ../common/ui.css. */
+
+body {
+  margin: 0;
+  background: var(--os-paper);
+  color: var(--os-ink);
+  font-size: var(--os-fs-14);
+  line-height: var(--os-lh-14);
+}
+
+/* Top bar ---------------------------------------------------------------- */
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 56px;
+  background: var(--os-paper);
+  border-bottom: 1px solid var(--os-line);
+}
+.bar-inner {
+  max-width: 1060px;
+  height: 56px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: var(--os-w-semibold);
+  font-size: var(--os-fs-16);
+  line-height: var(--os-lh-16);
+}
+.brand-mark {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(17, 17, 17, 0.12);
+}
+.brand-name {
+  white-space: nowrap;
+}
+.bar nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bar nav a.txt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  color: var(--os-ink-soft);
+  text-decoration: none;
+  font-size: var(--os-fs-14);
+  padding: 0 10px;
+  border-radius: var(--os-r);
+}
+.bar nav a.txt:hover {
+  background: var(--os-hover);
+  color: var(--os-ink);
+}
+.bar nav .ic {
+  width: 14px;
+  height: 14px;
+}
+
+/* Shell ----------------------------------------------------------------- */
+
+.shell {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 28px 24px 72px;
+  display: grid;
+  grid-template-columns: 180px minmax(0, 640px);
+  justify-content: center;
+  gap: 40px;
+  align-items: start;
+}
+
+.rail {
+  position: sticky;
+  top: 84px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rail-title {
+  margin: 0 0 12px;
+  padding: 0 10px;
+  color: var(--os-ink);
+  font-size: var(--os-fs-16);
+  line-height: var(--os-lh-16);
+  font-weight: var(--os-w-semibold);
+}
+.rail .eyebrow {
+  margin: 16px 0 4px;
+  padding: 0 10px;
+}
+.rail .eyebrow:first-child {
+  margin-top: 0;
+}
+.rail-title + .eyebrow {
+  margin-top: 0;
+}
+.rail a {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  font-size: var(--os-fs-14);
+  line-height: var(--os-lh-14);
+  color: var(--os-ink-soft);
+  text-decoration: none;
+  padding: 0 10px;
+  border-radius: var(--os-r);
+}
+.rail a:hover {
+  background: var(--os-hover);
+  color: var(--os-ink);
+}
+.rail a.active {
+  background: var(--os-sunken);
+  color: var(--os-accent-ink);
+  font-weight: var(--os-w-semibold);
+}
+
+.content {
+  min-width: 0;
+  max-width: 640px;
+}
+.lede {
+  margin: 0 0 24px;
+  max-width: 68ch;
+  font-size: var(--os-fs-16);
+  line-height: var(--os-lh-16);
+  color: var(--os-ink-soft);
+}
+
+/* Cards ----------------------------------------------------------------- */
+
+.card {
+  margin-bottom: 16px;
+  scroll-margin-top: 76px;
+}
+.card > .eyebrow {
+  margin: 0 0 4px;
+}
+.card h2 {
+  margin: 0 0 4px;
+  font-size: var(--os-fs-16);
+  line-height: var(--os-lh-16);
+  font-weight: var(--os-w-semibold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hint {
+  color: var(--os-muted);
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  margin: 4px 0 12px;
+  max-width: 68ch;
+}
+.empty-note {
+  color: var(--os-muted);
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  font-style: italic;
+}
+
+/* Learn more: the one-line hint stays visible (it says what leaves the
+   browser); the long explanation folds under it. */
+.hint + .more {
+  margin-top: -10px;
+}
+.more {
+  margin: 0 0 12px;
+}
+.more > summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  list-style: none;
+  cursor: pointer;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  font-weight: var(--os-w-medium);
+  color: var(--os-muted);
+  text-decoration: underline;
+  text-decoration-color: var(--os-line-strong);
+  text-underline-offset: 2px;
+  border-radius: var(--os-r-sm);
+}
+.more > summary::-webkit-details-marker {
+  display: none;
+}
+.more > summary:hover {
+  color: var(--os-ink);
+}
+.more > .hint {
+  margin: 2px 0 0;
+}
+.field > .more:last-child,
+.card > .field:last-child {
+  margin-bottom: 0;
+}
+
+/* Model-picking help: a muted disclosure row, not a box. */
+.model-help {
+  margin: 0 0 12px;
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+}
+.model-help > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  list-style: none;
+  cursor: pointer;
+  color: var(--os-muted);
+  font-weight: var(--os-w-medium);
+  border-radius: var(--os-r);
+}
+.model-help > summary::-webkit-details-marker {
+  display: none;
+}
+.model-help > summary:hover {
+  color: var(--os-ink);
+}
+.model-help > summary .ic {
+  width: 14px;
+  height: 14px;
+  transition: transform 140ms ease;
+}
+.model-help[open] > summary .ic {
+  transform: rotate(180deg);
+}
+.model-help-body {
+  padding: 4px 0 4px 20px;
+  max-width: 68ch;
+  color: var(--os-ink-soft);
+}
+.model-help-body p {
+  margin: 0 0 8px;
+}
+.model-help-body ul {
+  margin: 8px 0;
+  padding-left: 18px;
+}
+.model-help-body li {
+  margin: 4px 0;
+}
+.model-help-body .warn {
+  color: var(--os-warn-ink);
+}
+code {
+  background: var(--os-sunken);
+  color: var(--os-ink-soft);
+  padding: 1px 4px;
+  border-radius: var(--os-r-sm);
+  font-size: var(--os-fs-12);
+  font-family: var(--os-mono);
+}
+
+/* Live model test ------------------------------------------------------ */
+
+.test-status {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: var(--os-r);
+  background: var(--os-paper);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.test-line {
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+}
+.test-line.ok {
+  color: var(--os-good-ink);
+}
+.test-line.warn {
+  color: var(--os-warn-ink);
+}
+.test-line.fail {
+  color: var(--os-bad-ink);
+}
+.test-line.muted {
+  color: var(--os-muted);
+}
+/* The dot run is monospace and fixed-width so the growing dots can't shift the
+   line as they cycle. */
+.test-progress .dots {
+  display: inline-block;
+  width: 6ch;
+  font-family: var(--os-mono);
+}
+
+/* Forms ---------------------------------------------------------------- */
+
+.add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.add-row select {
+  flex: 1;
+}
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  background: none;
+  border: none;
+  color: var(--os-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--os-fs-13);
+  margin-left: auto;
+  padding: 0 8px;
+  border-radius: var(--os-r);
+}
+.link-btn:hover {
+  background: var(--os-bad-soft);
+  color: var(--os-bad-ink);
+}
+
+.field label:not(.radio) {
+  display: block;
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  font-weight: var(--os-w-semibold);
+  margin-bottom: 4px;
+}
+.model-row {
+  display: flex;
+  gap: 8px;
+}
+.model-row .model {
+  flex: 1;
+  min-width: 0;
+}
+.model-row .btn.small {
+  min-height: 36px;
+}
+.fetch-status {
+  margin: 4px 0 0;
+  min-height: 16px;
+}
+
+/* Suggested models: chips that fill the Model field in one click. */
+.suggest-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+}
+.suggest-label {
+  color: var(--os-muted);
+}
+.suggest-chips {
+  display: contents;
+}
+.suggest-chip {
+  min-height: 28px;
+  padding: 0 4px 0 10px;
+  gap: 6px;
+  border: 1px solid var(--os-line-2);
+  border-radius: var(--os-r-pill);
+  background: var(--os-surface);
+  color: var(--os-ink);
+  font: inherit;
+  font-size: var(--os-fs-13);
+  font-weight: var(--os-w-regular);
+  cursor: pointer;
+  transition: border-color 120ms ease;
+}
+.suggest-chip:hover {
+  border-color: var(--os-line-strong);
+}
+.suggest-chip .kind-tag {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  padding: 2px 4px;
+  border-radius: var(--os-r-sm);
+  background: var(--os-sunken);
+  color: var(--os-muted);
+}
+/* Not among the models this provider returned: still clickable, but quieter. */
+.suggest-chip.off-list {
+  background: transparent;
+  color: var(--os-muted);
+  border: 1px dashed var(--os-line-2);
+}
+.suggest-chip.off-list:hover {
+  border-color: var(--os-line-strong);
+}
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.radio-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.radio-row.gap-below {
+  margin-bottom: 12px;
+}
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: var(--os-fs-14);
+  line-height: var(--os-lh-14);
+  font-weight: var(--os-w-regular);
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--os-accent-ink);
+}
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--os-accent-ink);
+}
+.key-link {
+  font-weight: var(--os-w-regular);
+  font-size: var(--os-fs-12);
+  color: var(--os-muted);
+  margin-left: 6px;
+}
+.key-link:hover {
+  color: var(--os-ink);
+}
+
+/* Providers ------------------------------------------------------------ */
+
+/* The active provider is marked by its radio and the "Active" tag; the card
+   itself only firms up its border. No tint, no rail. */
+.provider {
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-r-lg);
+  padding: 16px;
+  margin-bottom: 12px;
+  background: var(--os-surface);
+}
+.provider.active {
+  border-color: var(--os-line-2);
+}
+.provider:not(.active) .active-tag {
+  display: none;
+}
+.provider-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.provider-body > .field:last-child {
+  margin-bottom: 0;
+}
+.active-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: var(--os-w-semibold);
+  cursor: pointer;
+}
+.type-badge {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  line-height: 18px;
+  color: var(--os-muted);
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-r-sm);
+  padding: 0 6px;
+  text-transform: uppercase;
+  letter-spacing: var(--os-track-label);
+}
+
+/* Site permissions ----------------------------------------------------- */
+
+.perm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.perm-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 4px 2px 12px;
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-r);
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  background: var(--os-surface-2);
+}
+.perm-item .origin {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.perm-state {
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  font-weight: var(--os-w-medium);
+  padding: 2px 6px;
+  border-radius: var(--os-r-sm);
+}
+.perm-state.allow {
+  background: var(--os-good-soft);
+  color: var(--os-good-ink);
+}
+.perm-state.block {
+  background: var(--os-bad-soft);
+  color: var(--os-bad-ink);
+}
+
+/* Chat history --------------------------------------------------------- */
+
+/* The count on the left, Clear history on the right. */
+.history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Chrome ---------------------------------------------------------------- */
+
+footer {
+  margin-top: 24px;
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  color: var(--os-muted);
+  max-width: 68ch;
+}
+
+/* Saving is instant and silent; the only feedback is this, so it has to be
+   where the eye already is. */
+.toast {
+  position: fixed;
+  top: 68px;
+  right: 24px;
+  z-index: 40;
+  background: var(--os-good-soft);
+  color: var(--os-good-ink);
+  border: 1px solid var(--os-good);
+  padding: 4px 12px;
+  border-radius: var(--os-r-pill);
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  font-weight: var(--os-w-semibold);
+  box-shadow: var(--os-shadow-2);
+  animation: toast-in 160ms ease-out;
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px 16px 64px;
+  }
+  /* The rail becomes a sticky chip row under the bar. */
+  .rail {
+    position: sticky;
+    top: 56px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 8px 16px;
+    margin: 0 -16px;
+    background: var(--os-paper);
+    border-bottom: 1px solid var(--os-line);
+    z-index: 15;
+  }
+  .rail-title {
+    flex: 0 0 auto;
+    margin: 0 4px 0 0;
+    padding: 0 12px 0 0;
+    border-right: 1px solid var(--os-line-2);
+    font-size: var(--os-fs-14);
+    line-height: var(--os-lh-14);
+  }
+  .rail .eyebrow {
+    display: none;
+  }
+  .rail a {
+    flex: 0 0 auto;
+    border: 1px solid var(--os-line);
+    border-radius: var(--os-r-pill);
+    padding: 0 12px;
+    background: var(--os-surface);
+    white-space: nowrap;
+  }
+  .rail a.active {
+    background: var(--os-sunken);
+    color: var(--os-accent-ink);
+  }
+  .content {
+    max-width: none;
+  }
+  .toast {
+    top: auto;
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+@media (max-width: 560px) {
+  .bar-inner {
+    padding: 0 16px;
+  }
+  .bar nav a.txt {
+    display: none;
+  }
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+  .model-row {
+    flex-wrap: wrap;
+  }
+}
+
+/* Settings sections use quiet dividers instead of repeated boxed cards. */
+.content {
+  max-width: 720px;
+}
+.content > .card {
+  margin: 0;
+  padding: 28px 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--os-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+.content > .card:first-of-type {
+  padding-top: 12px;
+}
+.content > .card > .eyebrow {
+  color: var(--os-accent-ink);
+}
+.content > .card h2 {
+  font-size: 20px;
+  line-height: 1.3;
+}
+footer {
+  padding: 24px 0 40px;
+}

@@ -1,0 +1,1404 @@
+/* Side panel. Colour, radius, shadow, type and focus come from
+   ../common/ui.css; this file is layout and panel-specific components only.
+
+   The panel can shrink below its usual width, so compact breakpoints keep
+   controls and popovers usable. Surface (white in light) is spent on the things you
+   touch or read closely: the composer field, the user's bubbles, cards and
+   menus. The aqua-to-cyan accent follows the ABCompanion logo. */
+
+html {
+  font-size: clamp(14px, calc(13px + 0.25vw), 16px);
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--os-paper);
+  color: var(--os-ink);
+  /* Fluid tokens follow the panel width while preserving readable minimums. */
+  --os-fs-12: clamp(12px, calc(11px + 0.35vw), 14px);
+  --os-lh-12: clamp(16px, calc(15px + 0.35vw), 19px);
+  --os-fs-13: clamp(13px, calc(12px + 0.35vw), 15px);
+  --os-lh-13: clamp(18px, calc(17px + 0.4vw), 22px);
+  --os-fs-14: clamp(14px, calc(13px + 0.35vw), 16px);
+  --os-lh-14: clamp(20px, calc(19px + 0.4vw), 24px);
+  --os-fs-16: clamp(17px, calc(16px + 0.35vw), 20px);
+  --os-lh-16: clamp(23px, calc(22px + 0.4vw), 28px);
+  --os-fs-20: clamp(20px, calc(19px + 0.4vw), 24px);
+  --os-lh-20: clamp(27px, calc(26px + 0.5vw), 33px);
+  --os-r-sm: clamp(4px, calc(3.5px + 0.12vw), 5px);
+  --os-r: clamp(7px, calc(6px + 0.45vw), 10px);
+  --os-r-lg: clamp(10px, calc(9px + 0.7vw), 16px);
+  --sp-icon: clamp(16px, calc(14px + 0.65vw), 20px);
+  --sp-small-icon: clamp(13px, calc(12px + 0.35vw), 16px);
+  --sp-brand-icon: clamp(30px, calc(28px + 0.9vw), 38px);
+  --sp-hit: clamp(34px, calc(32px + 1.2vw), 46px);
+  --sp-gutter: clamp(8px, 1.5vw, 16px);
+  font-size: var(--os-fs-14);
+  line-height: var(--os-lh-14);
+}
+
+/* Keep glyphs clear at every panel width. */
+.ic {
+  width: var(--sp-icon);
+  height: var(--sp-icon);
+}
+.jump-latest .ic,
+.examples button .ic,
+#not-configured .ic,
+.log-head .ic,
+.note .ic,
+.alert .ic,
+.stop-btn .ic {
+  width: var(--sp-small-icon);
+  height: var(--sp-small-icon);
+}
+
+/* Top bar ---------------------------------------------------------------- */
+
+.topbar {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  min-height: clamp(48px, calc(44px + 1.2vw), 58px);
+  min-width: 0;
+  padding: clamp(6px, 0.9vw, 10px) clamp(8px, 1.5vw, 16px);
+  border-bottom: 1px solid var(--os-line);
+  background: var(--os-paper);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, calc(6px + 0.5vw), 12px);
+  min-width: 0;
+  font-weight: var(--os-w-semibold);
+  font-size: var(--os-fs-14);
+  line-height: var(--os-lh-14);
+}
+
+.brand img {
+  width: var(--sp-brand-icon);
+  height: var(--sp-brand-icon);
+  flex: 0 0 var(--sp-brand-icon);
+}
+.brand span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--os-muted);
+  width: var(--sp-hit);
+  height: var(--sp-hit);
+  flex: 0 0 var(--sp-hit);
+  border-radius: var(--os-r);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, transform 120ms ease;
+}
+.icon-btn .ic {
+  width: var(--sp-icon);
+  height: var(--sp-icon);
+}
+.icon-btn:hover {
+  background: var(--os-hover);
+  color: var(--os-ink);
+}
+.icon-btn[aria-expanded="true"],
+.icon-btn[aria-pressed="true"],
+.icon-btn:active {
+  color: var(--os-accent-ink);
+}
+.icon-btn:active {
+  transform: scale(0.94);
+}
+/* Which model answers: a second line of the top bar, opens Settings. A quiet
+   outline pill; the ::after stretches the hit area to 32px tall. */
+.model-line {
+  flex: 1 0 100%;
+  display: flex;
+  min-width: 0;
+  padding: 2px 0 4px;
+}
+.model-chip {
+  position: relative;
+  height: clamp(24px, calc(22px + 0.45vw), 30px);
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  padding: 0 clamp(8px, 1vw, 12px);
+  gap: 6px;
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-r-pill);
+  background: transparent;
+  color: var(--os-muted);
+  font: inherit;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  font-weight: var(--os-w-regular);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.model-chip::after {
+  content: "";
+  position: absolute;
+  inset: -4px 0;
+}
+.model-chip:hover {
+  background: var(--os-hover);
+  border-color: var(--os-line-2);
+}
+.model-chip .mc-model {
+  font-family: var(--os-mono);
+  color: var(--os-ink-soft);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.model-chip .mc-sep {
+  flex: 0 0 auto;
+}
+.model-chip .mc-provider {
+  flex: 0 1 auto;
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Banners -------------------------------------------------------------- */
+
+.status-bar {
+  padding: 6px 12px;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  color: var(--os-muted);
+  background: var(--os-paper);
+  border-bottom: 1px solid var(--os-line);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+/* History popover ------------------------------------------------------ */
+
+/* top is set from the top bar's bottom edge when the menu opens. */
+.history-popover {
+  position: absolute;
+  top: 42px;
+  right: 8px;
+  z-index: 30;
+  background: var(--os-surface);
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-r-lg);
+  box-shadow: var(--os-shadow-2);
+  min-width: min(210px, calc(100vw - 16px));
+  max-width: 290px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 4px;
+}
+/* History popover: full width gives chat titles room. */
+.hist-menu {
+  left: 8px;
+  right: 8px;
+  max-width: none;
+  max-height: min(420px, calc(100vh - 96px));
+}
+.hist-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px 4px;
+}
+.hist-count {
+  color: var(--os-muted);
+}
+.hist-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hist-item {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-radius: var(--os-r);
+}
+.hist-item:hover,
+.hist-item:focus-within {
+  background: var(--os-hover);
+}
+.hist-open {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 44px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: var(--os-r);
+  background: transparent;
+  color: var(--os-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.hist-title {
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  font-weight: var(--os-w-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hist-item.current .hist-title {
+  color: var(--os-accent-ink);
+  font-weight: var(--os-w-semibold);
+}
+.hist-meta {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  color: var(--os-muted);
+  white-space: nowrap;
+}
+.hist-time {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+}
+.hist-model {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--os-mono);
+}
+.hist-item .icon-btn {
+  flex: 0 0 auto;
+}
+.hist-item .hist-delete:hover:not(:disabled) {
+  color: var(--os-bad-ink);
+  background: var(--os-bad-soft);
+}
+.hist-item button:disabled,
+.hist-foot button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.hist-rename-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 36px;
+  margin: 4px;
+  padding: 0 8px;
+  border: 1px solid var(--os-accent);
+  border-radius: var(--os-r);
+  background: var(--os-surface);
+  color: var(--os-ink);
+  font: inherit;
+  font-size: var(--os-fs-13);
+  box-shadow: 0 0 0 3px var(--os-accent-ring);
+  outline: none;
+}
+.hist-confirm {
+  flex: 1 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  color: var(--os-ink);
+}
+.hist-confirm > span {
+  flex: 1 1 auto;
+}
+/* Clear all's confirm takes the footer's place; the footer already pads it. */
+.hist-foot .hist-confirm {
+  padding: 0;
+}
+.hist-confirm button,
+.hist-off button,
+.hist-foot button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--os-line-2);
+  border-radius: var(--os-r);
+  background: var(--os-surface);
+  color: var(--os-ink);
+  font: inherit;
+  font-size: var(--os-fs-12);
+  font-weight: var(--os-w-semibold);
+  cursor: pointer;
+}
+.hist-confirm button:hover,
+.hist-off button:hover {
+  background: linear-gradient(var(--os-hover), var(--os-hover)) var(--os-surface);
+}
+.hist-confirm button.danger,
+.hist-foot .hist-clear {
+  color: var(--os-bad-ink);
+}
+.hist-confirm button.danger:hover,
+.hist-foot .hist-clear:hover:not(:disabled) {
+  background: var(--os-bad-soft);
+}
+.hist-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 6px 2px 2px 8px;
+  border-top: 1px solid var(--os-line);
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  color: var(--os-muted);
+}
+.hist-foot .hist-note {
+  flex: 1 1 auto;
+}
+.hist-foot .hist-clear {
+  border-color: transparent;
+  background: transparent;
+}
+.hist-busy,
+.hist-empty,
+.hist-off p {
+  margin: 0;
+  padding: 8px;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  color: var(--os-muted);
+}
+.hist-off {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-bottom: 4px;
+}
+.hist-off button {
+  margin: 0 8px;
+}
+.hist-status {
+  margin: 0;
+  padding: 4px 8px 2px;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  color: var(--os-muted);
+}
+.hist-status:empty {
+  display: none;
+}
+
+/* Transcript ----------------------------------------------------------- */
+
+.messages-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+
+.messages {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 960px;
+  min-width: 0;
+  min-height: 0;
+  margin: 0 auto;
+  overflow-y: auto;
+  padding: 16px var(--sp-gutter) 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* Content fades into the chrome instead of being cut by it. */
+  mask-image: linear-gradient(to bottom, transparent 0, #000 16px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16px);
+}
+
+.jump-latest {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  font: inherit;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  font-weight: var(--os-w-semibold);
+  color: var(--os-ink-soft);
+  background: var(--os-surface);
+  border: 1px solid var(--os-line-2);
+  border-radius: var(--os-r-pill);
+  padding: 0 12px;
+  box-shadow: var(--os-shadow-2);
+  cursor: pointer;
+  z-index: 10;
+}
+.jump-latest:hover {
+  background: linear-gradient(var(--os-hover), var(--os-hover)) var(--os-surface);
+  color: var(--os-ink);
+}
+.jump-latest .ic {
+  width: var(--sp-small-icon);
+  height: var(--sp-small-icon);
+}
+
+/* Empty state: one quiet question and three suggestions, anchored at the
+   bottom of the transcript (margin-top:auto) so the group sits just above the
+   composer instead of floating in the middle of the void. */
+.empty-state {
+  margin: auto 0 0;
+  padding: 0 0 clamp(16px, 8vh, 64px);
+}
+.empty-title {
+  margin: 0;
+  padding: 0 8px;
+  font-size: var(--os-fs-16);
+  line-height: var(--os-lh-16);
+  font-weight: var(--os-w-semibold);
+  color: var(--os-ink);
+}
+.examples {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.examples li {
+  margin: 0;
+}
+.examples button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: left;
+  min-height: 36px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--os-r);
+  background: transparent;
+  font: inherit;
+  font-size: var(--os-fs-14);
+  line-height: var(--os-lh-14);
+  color: var(--os-ink-soft);
+  cursor: pointer;
+}
+.examples button .ic {
+  width: var(--sp-small-icon);
+  height: var(--sp-small-icon);
+  color: var(--os-muted);
+}
+.examples button:hover {
+  background: var(--os-hover);
+  color: var(--os-ink);
+}
+
+#not-configured {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  background: var(--os-warn-soft);
+  color: var(--os-warn-ink);
+  border-radius: var(--os-r);
+}
+#not-configured .ic {
+  width: var(--sp-small-icon);
+  height: var(--sp-small-icon);
+  margin-top: 2px;
+}
+#not-configured a {
+  font-weight: var(--os-w-semibold);
+}
+
+/* Messages. The assistant speaks as plain prose on the paper (no card, no
+   bubble), so the answer is the only thing with real contrast. The user's
+   turn is a small surface bubble on the right. */
+.msg {
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+.msg.user {
+  align-self: flex-end;
+  max-width: 85%;
+  background: var(--os-surface);
+  border: 1px solid var(--os-line);
+  border-radius: 12px 12px 4px 12px;
+  padding: 8px 12px;
+  color: var(--os-ink);
+  font-size: var(--os-fs-14);
+  line-height: var(--os-lh-14);
+}
+.msg.assistant {
+  align-self: stretch;
+  color: var(--os-ink);
+  font-size: var(--os-fs-14);
+  line-height: var(--os-lh-prose);
+}
+.msg.assistant :first-child {
+  margin-top: 0;
+}
+.msg.assistant :last-child {
+  margin-bottom: 0;
+}
+.msg.assistant p {
+  margin: 0 0 8px;
+}
+.msg.assistant code {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  background: var(--os-sunken);
+  border-radius: var(--os-r-sm);
+  padding: 1px 4px;
+}
+.msg.assistant pre {
+  background: var(--os-surface);
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-r);
+  padding: 8px 12px;
+  overflow-x: auto;
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  line-height: 18px;
+}
+.msg.assistant pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+.msg.assistant ul,
+.msg.assistant ol {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+.msg.assistant strong {
+  font-weight: var(--os-w-semibold);
+}
+
+/* Tool log. A run is a log, not a stack of cards: one rule, one dot per
+   action, status in the dot only. Consecutive actions collapse under a
+   single header so a 10-step run reads as one object. */
+.log {
+  align-self: stretch;
+  font-size: var(--os-fs-12);
+  line-height: 18px;
+}
+.log-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  cursor: pointer;
+  color: var(--os-muted);
+  min-height: 32px;
+  padding: 0 8px;
+  margin-left: -8px;
+  border-radius: var(--os-r);
+  width: fit-content;
+}
+.log-head::-webkit-details-marker {
+  display: none;
+}
+.log-head:hover {
+  background: var(--os-hover);
+  color: var(--os-ink-soft);
+}
+.log-head .ic {
+  width: var(--sp-small-icon);
+  height: var(--sp-small-icon);
+  transition: transform 120ms ease;
+}
+.log[open] > .log-head .ic {
+  transform: rotate(180deg);
+}
+.log-head .log-sum {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+}
+
+.log-rows {
+  margin: 0 0 0 5px;
+  padding-left: 18px;
+  border-left: 1px solid var(--os-line);
+}
+.log-row {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 3px 0;
+  color: var(--os-muted);
+}
+.log-dot {
+  position: absolute;
+  left: -21.5px;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--os-line-2);
+  box-shadow: 0 0 0 2px var(--os-paper);
+}
+.log-row.ok .log-dot {
+  background: var(--os-good);
+}
+.log-row.err .log-dot {
+  background: var(--os-bad);
+}
+.log-row.running .log-dot {
+  background: var(--os-accent);
+  animation: pulse 1s infinite ease-in-out;
+}
+.log-row .tool-name {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  color: var(--os-ink-soft);
+  flex: 0 0 auto;
+}
+.log-row .tool-detail {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.log-row .log-dur {
+  flex: 0 0 auto;
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  color: var(--os-muted);
+}
+
+/* Notes and alerts: single quiet lines, not pills. */
+.note {
+  align-self: stretch;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  color: var(--os-muted);
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.note .ic {
+  width: var(--sp-small-icon);
+  height: var(--sp-small-icon);
+  position: relative;
+  top: 2px;
+}
+.note .note-action {
+  flex: 0 0 auto;
+  margin-left: auto;
+  align-self: center;
+  min-height: 32px;
+  border: 1px solid var(--os-line-2);
+  background: var(--os-surface);
+  color: var(--os-ink);
+  border-radius: var(--os-r);
+  padding: 0 12px;
+  font: inherit;
+  font-size: var(--os-fs-12);
+  font-weight: var(--os-w-semibold);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.note .note-action:hover {
+  background: linear-gradient(var(--os-hover), var(--os-hover)) var(--os-surface);
+}
+
+.alert {
+  align-self: stretch;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  padding: 8px 12px;
+  border-radius: var(--os-r);
+}
+.alert .ic {
+  width: var(--sp-small-icon);
+  height: var(--sp-small-icon);
+  margin-top: 2px;
+}
+.alert.bad {
+  background: var(--os-bad-soft);
+  color: var(--os-bad-ink);
+}
+.site-menu {
+  position: absolute;
+  bottom: 100%;
+  right: 12px;
+  margin-bottom: 4px;
+  background: var(--os-surface);
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-r-lg);
+  box-shadow: var(--os-shadow-2);
+  width: min(310px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  z-index: 25;
+  padding: 4px;
+}
+.site-menu .sm-head {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  color: var(--os-muted);
+  padding: 0 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.site-menu .sm-title {
+  padding: 6px 8px 2px;
+  color: var(--os-ink);
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  font-weight: var(--os-w-semibold);
+}
+.site-menu .sm-intro {
+  padding: 4px 8px 8px;
+  color: var(--os-muted);
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+}
+.site-menu button {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  width: 100%;
+  align-items: start;
+  gap: 8px;
+  min-height: 48px;
+  border: none;
+  background: transparent;
+  color: var(--os-ink);
+  font: inherit;
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  padding: 7px 8px;
+  border-radius: var(--os-r);
+  cursor: pointer;
+  text-align: left;
+}
+.site-menu button > .ic {
+  margin-top: 1px;
+  color: var(--os-ink-soft);
+}
+.site-menu .sm-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.site-menu .sm-label {
+  font-weight: var(--os-w-medium);
+}
+.site-menu .sm-description {
+  color: var(--os-muted);
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  font-weight: var(--os-w-regular);
+}
+.site-menu button:hover {
+  background: var(--os-hover);
+}
+.site-menu button.current .sm-label {
+  font-weight: var(--os-w-semibold);
+  color: var(--os-accent-ink);
+}
+
+
+.warn {
+  background: var(--os-warn-soft);
+  color: var(--os-warn-ink);
+}
+
+/* Permission / plan / MCP / save cards: the decision points. A raised surface
+   on the paper, no tint and no rail; the primary button carries the accent. */
+.perm-card {
+  align-self: stretch;
+  border: 1px solid var(--os-line-2);
+  border-radius: var(--os-r-lg);
+  padding: 12px;
+  background: var(--os-surface);
+  color: var(--os-ink);
+  box-shadow: var(--os-shadow-1);
+}
+.perm-card.sensitive {
+  border-color: var(--os-bad);
+}
+.perm-card.sensitive h3 {
+  color: var(--os-bad-ink);
+}
+.perm-card h3 {
+  margin: 0 0 4px;
+  font-size: var(--os-fs-14);
+  line-height: var(--os-lh-14);
+  font-weight: var(--os-w-semibold);
+}
+.perm-card p {
+  margin: 0 0 12px;
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  color: var(--os-ink-soft);
+}
+.perm-card .origin {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  background: var(--os-sunken);
+  color: var(--os-ink);
+  border-radius: var(--os-r-sm);
+  padding: 1px 4px;
+}
+.perm-card .muted-note {
+  margin: 0;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  color: var(--os-muted);
+}
+.perm-card .muted-note:not(:last-child) {
+  margin-bottom: 12px;
+}
+.perm-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.perm-buttons button {
+  min-height: 32px;
+  border: 1px solid var(--os-line-2);
+  background: var(--os-surface);
+  color: var(--os-ink);
+  border-radius: var(--os-r);
+  padding: 0 12px;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--os-fs-13);
+  font-weight: var(--os-w-semibold);
+}
+.perm-buttons button:hover:not(:disabled) {
+  background: linear-gradient(var(--os-hover), var(--os-hover)) var(--os-surface);
+}
+.perm-buttons button.primary {
+  background-color: var(--os-surface);
+  background-image: var(--os-accent-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: var(--os-accent-ink);
+  -webkit-text-fill-color: transparent;
+  border-color: var(--os-line-2);
+}
+.perm-buttons button.primary:hover:not(:disabled) {
+  background-image: var(--os-accent-gradient-hover);
+  border-color: var(--os-line-strong);
+}
+.perm-buttons button.danger {
+  color: var(--os-bad-ink);
+}
+.perm-buttons button.danger:hover:not(:disabled) {
+  background: var(--os-bad-soft);
+}
+.perm-buttons button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.plan-steps {
+  margin: 4px 0 12px;
+  padding-left: 20px;
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+}
+.plan-steps li {
+  margin: 4px 0;
+}
+.plan-domains {
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+.plan-domains-label {
+  color: var(--os-muted);
+}
+.domain-chip {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  background: var(--os-sunken);
+  color: var(--os-ink-soft);
+  border: 0;
+  border-radius: var(--os-r-sm);
+  padding: 1px 4px;
+}
+.thinking {
+  color: var(--os-muted);
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.dot-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--os-accent);
+  flex: 0 0 auto;
+  animation: pulse 1s infinite ease-in-out;
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Composer: the textarea, approval selector and Send control share one field. */
+.composer {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 960px;
+  align-self: center;
+  padding: 4px var(--sp-gutter) 12px;
+  background: var(--os-paper);
+  position: relative;
+}
+
+.composer-field {
+  background: var(--os-surface);
+  border: 1px solid var(--os-line-strong); /* 3:1 control boundary, like every other field */
+  border-radius: var(--os-r-lg);
+  box-shadow: var(--os-shadow-1);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.composer-field:has(textarea:focus-visible) {
+  border-color: var(--os-accent);
+  box-shadow: 0 0 0 3px var(--os-accent-ring);
+}
+
+.composer textarea {
+  display: block;
+  width: 100%;
+  resize: none;
+  border: 0;
+  background: transparent;
+  padding: clamp(8px, 1vw, 12px) var(--sp-gutter) 0;
+  font: inherit;
+  font-size: var(--os-fs-14);
+  line-height: var(--os-lh-14);
+  color: var(--os-ink);
+  min-height: clamp(48px, calc(44px + 1.2vw), 60px);
+  max-height: clamp(128px, 20vh, 200px);
+  outline: none;
+}
+.composer textarea::placeholder {
+  color: var(--os-muted);
+}
+
+.composer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px clamp(4px, 0.7vw, 6px) 6px var(--sp-gutter);
+}
+.approval-controls {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+}
+.composer-actions {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  min-width: 0;
+  gap: 4px;
+  margin-left: auto;
+}
+.composer-buttons {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.send-btn {
+  width: var(--sp-hit);
+  height: var(--sp-hit);
+  min-height: var(--sp-hit);
+  padding: 0;
+  border-radius: var(--os-r);
+}
+.send-btn .ic {
+  width: var(--sp-icon);
+  height: var(--sp-icon);
+  color: var(--os-ink);
+  transition: color 140ms ease, transform 140ms ease, stroke-width 140ms ease;
+}
+/* Keep Send clearly visible while the composer is empty. */
+.composer-field:has(textarea:placeholder-shown) .send-btn,
+.composer-field:has(textarea:placeholder-shown) .send-btn:hover:not(:disabled) {
+  background: var(--os-surface);
+  background-image: none;
+  color: var(--os-ink);
+  -webkit-text-fill-color: currentColor;
+  border-color: var(--os-line-2);
+}
+/* A typed message changes the arrow itself into the clear next action. The
+   button stays white; only the arrow picks up the teal/cyan theme color. */
+.composer-field:has(textarea:not(:placeholder-shown)) .send-btn {
+  background: var(--os-surface);
+  background-image: none;
+  color: var(--os-ink);
+  -webkit-text-fill-color: currentColor;
+  border-color: var(--os-line-2);
+}
+.composer-field:has(textarea:not(:placeholder-shown)) .send-btn .ic {
+  color: var(--os-accent-ink);
+  transform: translateY(-1px);
+  stroke-width: 2.1;
+}
+.send-btn:active .ic {
+  transform: translateY(0) scale(0.92);
+}
+
+.stop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: var(--sp-hit);
+  padding: 0 10px 0 8px;
+  background: var(--os-surface);
+  color: var(--os-bad-ink);
+  border: 1px solid var(--os-line-2);
+  border-radius: var(--os-r);
+  font: inherit;
+  font-size: var(--os-fs-13);
+  font-weight: var(--os-w-semibold);
+  cursor: pointer;
+}
+.stop-btn .ic {
+  width: var(--sp-small-icon);
+  height: var(--sp-small-icon);
+}
+.stop-btn:hover {
+  background: var(--os-bad-soft);
+}
+
+.composer-label {
+  flex: 0 0 auto;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  color: var(--os-muted);
+}
+@media (max-width: 279px) {
+  .composer-bar {
+    flex-wrap: wrap;
+    justify-content: initial;
+    gap: 2px 8px;
+  }
+  .approval-controls {
+    order: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .composer-actions {
+    order: 2;
+    flex: 0 0 100%;
+    justify-content: flex-end;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 180px) {
+  .approval-menu {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 359px) {
+  .composer-label {
+    display: none;
+  }
+}
+
+@media (max-width: 239px) {
+  .topbar .brand {
+    flex: 0 1 100%;
+  }
+  .topbar-actions {
+    margin-left: auto;
+  }
+  .composer-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .approval-controls,
+  .composer-actions {
+    width: 100%;
+  }
+  .approval-controls {
+    justify-content: space-between;
+  }
+  .composer-actions {
+    justify-content: flex-end;
+    margin-left: 0;
+  }
+  .site-chip:not([hidden]) {
+    max-width: 120px;
+  }
+}
+
+/* The collapsed picker saves composer space; its menu opens above the field. */
+.approval-picker {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+.approval-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: var(--sp-hit);
+  padding: 0 10px;
+  border: 1px solid var(--os-line-2);
+  border-radius: var(--os-r);
+  background: var(--os-surface);
+  color: var(--os-ink);
+  font: inherit;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  font-weight: var(--os-w-semibold);
+  cursor: pointer;
+}
+.approval-trigger:hover {
+  background: linear-gradient(var(--os-hover), var(--os-hover)) var(--os-surface);
+  border-color: var(--os-line-strong);
+}
+#autonomy-current {
+  background-image: var(--os-accent-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: var(--os-accent-ink);
+  -webkit-text-fill-color: transparent;
+}
+.approval-trigger .ic {
+  width: 14px;
+  height: 14px;
+  color: var(--os-ink);
+  transition: transform 120ms ease;
+}
+.approval-trigger[aria-expanded="true"] .ic {
+  transform: rotate(180deg);
+  color: var(--os-accent-ink);
+}
+.approval-menu {
+  position: fixed;
+  left: 8px;
+  bottom: 8px;
+  transform: none;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: max-content;
+  max-width: calc(100vw - 20px);
+  padding: 4px;
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-r-lg);
+  background: var(--os-surface);
+  box-shadow: var(--os-shadow-2);
+}
+.seg {
+  appearance: none;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--os-line);
+  border-radius: 7px;
+  background: var(--os-surface);
+  color: var(--os-ink-soft);
+  font: inherit;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  font-weight: var(--os-w-semibold);
+  cursor: pointer;
+}
+.seg:hover {
+  background: var(--os-surface);
+  border-color: var(--os-line-2);
+  color: var(--os-ink-soft);
+}
+.seg.active {
+  background-color: var(--os-surface);
+  background-image: var(--os-accent-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: var(--os-accent-ink);
+  -webkit-text-fill-color: transparent;
+  border-color: var(--os-line-strong);
+  font-weight: var(--os-w-bold);
+  box-shadow: none;
+}
+
+.site-chip {
+  flex: 0 1 auto;
+  min-width: 0;
+  min-height: var(--sp-hit);
+  max-width: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border: none;
+  background: transparent;
+  color: var(--os-muted);
+  font: inherit;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  padding: 0 8px;
+  border-radius: var(--os-r);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.site-chip[hidden] {
+  display: none;
+}
+.site-chip:hover {
+  background: var(--os-hover);
+  color: var(--os-ink-soft);
+}
+.site-chip[aria-expanded="true"] {
+  color: var(--os-accent-ink);
+}
+.site-chip .site-host {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.site-chip .site-sep {
+  flex: none;
+  white-space: pre;
+}
+.site-chip .site-state {
+  flex: none;
+  font-weight: var(--os-w-semibold);
+}
+.site-chip .site-state.ok {
+  color: var(--os-good-ink);
+}
+.site-chip .site-state.blocked {
+  color: var(--os-bad-ink);
+}
+.site-chip .site-state.warn {
+  color: var(--os-warn-ink);
+}
+
+
+/* Popovers ------------------------------------------------------------- */
+
+.slash-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 12px;
+  right: 12px;
+  margin-bottom: 4px;
+  padding: 4px;
+  background: var(--os-surface);
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-r-lg);
+  box-shadow: var(--os-shadow-2);
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: 20;
+}
+.slash-item {
+  min-height: 32px;
+  padding: 6px 8px;
+  border-radius: var(--os-r);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+.slash-item.active,
+.slash-item:hover {
+  background: var(--os-hover);
+}
+.slash-cmd {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  font-weight: var(--os-w-semibold);
+  color: var(--os-ink);
+}
+.slash-preview {
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  color: var(--os-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.slash-empty {
+  padding: 8px;
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  color: var(--os-muted);
+}
+
+.warn {
+  color: var(--os-warn-ink);
+}

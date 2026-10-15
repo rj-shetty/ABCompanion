@@ -1,0 +1,393 @@
+/* ABCompanion shared UI layer ----------------------------------------------
+   One token set for every surface we own: the side panel, the settings page and
+   the in-page overlay. Clean white paper with near-black ink, a tight
+   4/8/12 radius set, and a five-step type scale (12/13/14/16/20). The brand
+   gradient is reserved for text; interactive surfaces remain white.
+
+   Linked as a second stylesheet BEFORE the page stylesheet (never @import,
+   which serialises the fetch). Page stylesheets may only add layout and
+   page-specific components; colour, radius, shadow, type and focus live here.
+
+   Brand accents use dark text colors for legibility on white. Surfaces and
+   selected controls do not use the brand colors as fills.
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Keep the light theme consistently white, including menus and controls. */
+  --os-paper: #ffffff;
+  --os-surface: #ffffff;
+  --os-surface-2: #ffffff;
+  --os-sunken: #ffffff;
+  --os-raised: #ffffff;
+  --os-hover: rgba(17, 17, 17, 0.055);
+
+  /* Lines */
+  --os-line: #e2e2df;
+  --os-line-2: #ccccca;
+  --os-line-strong: #777774;
+
+  /* Text */
+  --os-ink: #111111;
+  --os-ink-soft: #262626;
+  --os-muted: #4b4b49;
+
+  /* Brand */
+  --os-accent: #555b5d;
+  --os-accent-hover: #303638;
+  --os-accent-ink: #006b73;
+  --os-accent-soft: #ffffff;
+  --os-accent-ring: rgba(17, 17, 17, 0.14);
+  --os-accent-gradient: linear-gradient(105deg, #007568 0%, #007b8e 100%);
+  --os-accent-gradient-hover: linear-gradient(105deg, #006357 0%, #006878 100%);
+  --os-on-accent: #111111;
+
+  /* Semantics */
+  --os-good: #15803d;
+  --os-good-ink: #166534;
+  --os-good-soft: #e7f6ec;
+  --os-warn: #b45309;
+  --os-warn-ink: #92400e;
+  --os-warn-soft: #fdf2df;
+  --os-bad: #dc2626;
+  --os-bad-ink: #b91c1c;
+  --os-bad-soft: #fdeceb;
+
+  /* Shape */
+  --os-r-sm: 4px;
+  --os-r: 8px;
+  --os-r-lg: 12px;
+  --os-r-pill: 999px;
+
+  /* Space */
+  --os-1: 4px;
+  --os-2: 8px;
+  --os-3: 12px;
+  --os-4: 16px;
+  --os-5: 20px;
+  --os-6: 24px;
+  --os-8: 32px;
+  --os-10: 40px;
+
+  /* Depth */
+  --os-shadow-1: 0 1px 2px rgba(28, 25, 23, 0.06);
+  --os-shadow-2: 0 1px 2px rgba(28, 25, 23, 0.06), 0 8px 24px -8px rgba(28, 25, 23, 0.16);
+  --os-shadow-3: 0 24px 48px -16px rgba(28, 25, 23, 0.24);
+
+  /* Type: five sizes, each with its line height; prose runs at 1.5. */
+  --os-fs-12: 12px;
+  --os-lh-12: 16px;
+  --os-fs-13: 13px;
+  --os-lh-13: 18px;
+  --os-fs-14: 14px;
+  --os-lh-14: 20px;
+  --os-fs-16: 16px;
+  --os-lh-16: 22px;
+  --os-fs-20: 20px;
+  --os-lh-20: 26px;
+  --os-lh-prose: 1.5;
+  --os-w-regular: 400;
+  --os-w-medium: 500;
+  --os-w-semibold: 600;
+  --os-w-bold: 700;
+  --os-track-label: 0.08em;
+  --os-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --os-sans: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--os-sans);
+  font-weight: 450;
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Type ramp -------------------------------------------------------------- */
+
+h1,
+h2,
+h3,
+.empty-title {
+  text-wrap: balance;
+}
+
+.os-display {
+  font-size: var(--os-fs-20);
+  line-height: var(--os-lh-20);
+  font-weight: var(--os-w-bold);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.os-title {
+  font-size: var(--os-fs-16);
+  line-height: var(--os-lh-16);
+  font-weight: var(--os-w-semibold);
+  margin: 0;
+}
+/* Uppercase labels: mono, small, tracked, and never in the accent. */
+.eyebrow {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  font-weight: var(--os-w-semibold);
+  letter-spacing: var(--os-track-label);
+  text-transform: uppercase;
+  color: var(--os-muted);
+}
+.mono {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+}
+
+/* Counts, durations and prices line up when they change. */
+.log-sum,
+.log-dur,
+.plan-steps,
+#temp-value,
+input[type="number"],
+.interval-hint,
+.test-line {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Icons: an inline <svg> sprite is the only CSP-safe, no-fetch way to get real
+   icons into an MV3 page. 16px glyph in a 32px target, stroked in currentColor
+   so hover/active states need no second asset. */
+.ic {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Primitives ------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--os-2);
+  min-height: 36px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-12);
+  font-weight: var(--os-w-semibold);
+  border: 1px solid var(--os-line-2);
+  border-radius: var(--os-r);
+  background-color: var(--os-surface);
+  background-image: var(--os-accent-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: var(--os-accent-ink);
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.btn:hover:not(:disabled) {
+  background-image: var(--os-accent-gradient-hover);
+  border-color: var(--os-line-strong);
+}
+.btn .ic,
+.perm-buttons button.primary .ic {
+  color: var(--os-ink);
+  -webkit-text-fill-color: currentColor;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.btn.small {
+  min-height: 32px;
+  padding: 0 12px;
+}
+.btn.small .ic {
+  width: 14px;
+  height: 14px;
+}
+
+/* Secondary buttons keep their neutral hover tint over the shared accent.
+   the surface so it reads the same on paper and on a card. */
+.btn-ghost {
+  background: var(--os-surface);
+  background-image: none;
+  -webkit-background-clip: border-box;
+  color: var(--os-ink);
+  -webkit-text-fill-color: currentColor;
+  border-color: var(--os-line-2);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: linear-gradient(var(--os-hover), var(--os-hover)) var(--os-surface);
+}
+
+.btn-danger {
+  background: transparent;
+  background-image: none;
+  -webkit-background-clip: border-box;
+  color: var(--os-bad-ink);
+  -webkit-text-fill-color: currentColor;
+  border-color: var(--os-bad);
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--os-bad-soft);
+}
+
+/* Static tags. Neutral by default; the semantic pairs carry meaning, and
+   `.accent` is reserved for the one "Active" marker. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--os-1);
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  font-weight: var(--os-w-medium);
+  border: 0;
+  border-radius: var(--os-r-sm);
+  padding: 2px 6px;
+  background: var(--os-sunken);
+  color: var(--os-ink-soft);
+  white-space: nowrap;
+}
+.chip.good {
+  background: var(--os-good-soft);
+  color: var(--os-good-ink);
+}
+.chip.warn {
+  background: var(--os-warn-soft);
+  color: var(--os-warn-ink);
+}
+.chip.bad {
+  background: var(--os-bad-soft);
+  color: var(--os-bad-ink);
+}
+.chip.accent {
+  background: var(--os-accent-soft);
+  color: var(--os-accent-ink);
+}
+.chip.mono {
+  font-family: var(--os-mono);
+}
+
+.card {
+  background: var(--os-surface);
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-r-lg);
+  padding: var(--os-5);
+}
+
+.field {
+  margin-bottom: var(--os-4);
+}
+.field > label:not(.radio) {
+  display: block;
+  font-size: var(--os-fs-13);
+  line-height: var(--os-lh-13);
+  font-weight: var(--os-w-semibold);
+  margin-bottom: var(--os-1);
+  color: var(--os-ink);
+}
+
+/* Every text-ish control, including the ones rendered without an explicit
+   type attribute (a bare <input> is type=text but matches no [type] selector,
+   which is why a few fields used to render as raw UA boxes). */
+.input,
+.os-form select,
+.os-form textarea,
+.os-form input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]) {
+  width: 100%;
+  min-height: 36px;
+  padding: 0 10px;
+  /* line-strong, not line-2: a control boundary needs 3:1 against the surface (WCAG 1.4.11). */
+  border: 1px solid var(--os-line-strong);
+  border-radius: var(--os-r);
+  background: var(--os-surface);
+  color: var(--os-ink);
+  font: inherit;
+  font-size: var(--os-fs-14);
+  line-height: var(--os-lh-14);
+}
+.os-form textarea {
+  padding: 8px 10px;
+}
+.input::placeholder,
+.os-form input::placeholder,
+.os-form textarea::placeholder {
+  color: var(--os-muted);
+}
+.input:hover,
+.os-form select:hover,
+.os-form textarea:hover,
+.os-form input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):hover {
+  border-color: var(--os-muted);
+}
+/* Text fields show focus as an accent border plus a soft ring, on any focus
+   (a caret alone is too easy to lose). */
+.input:focus,
+.os-form select:focus,
+.os-form textarea:focus,
+.os-form input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):focus {
+  outline: none;
+  border-color: var(--os-accent);
+  box-shadow: 0 0 0 3px var(--os-accent-ring);
+}
+
+/* Native checked states and focus indicators stay neutral; the brand hue is
+   reserved for readable text accents instead of colored control fills. */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--os-accent-ink);
+}
+
+a {
+  color: inherit;
+  text-decoration-color: var(--os-line-strong);
+  text-underline-offset: 2px;
+}
+
+kbd {
+  font-family: var(--os-mono);
+  font-size: var(--os-fs-12);
+  line-height: var(--os-lh-12);
+  background: var(--os-sunken);
+  color: var(--os-ink-soft);
+  border-radius: var(--os-r-sm);
+  padding: 0 4px;
+}
+
+/* One focus treatment, keyboard only: a 2px accent outline, offset so it never
+   sits on top of the control's own border. */
+:focus-visible {
+  outline: 2px solid var(--os-accent);
+  outline-offset: 2px;
+}
+
+/* The hidden attribute must beat any component display rule (several of ours
+   are display:flex, which otherwise overrides the UA's [hidden] rule). */
+[hidden] {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
