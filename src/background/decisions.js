@@ -18,7 +18,7 @@
 // throws. null means "no opinion": callers keep today's behavior exactly.
 //
 // We never send OpenRouter's optional `user` / `session_id` / `trace` fields:
-// they are tracking identifiers and ABCompanion sends no telemetry.
+// they are tracking identifiers and Agent Go sends no telemetry.
 
 import { DECISION_SENSITIVITY } from "../common/constants.js";
 
@@ -75,7 +75,7 @@ export function resolveSource(config) {
   const headers = { "content-type": "application/json", authorization: `Bearer ${apiKey}` };
   if (source === "openrouter") {
     // OpenRouter attribution headers, same as providers.js.
-    headers["x-title"] = "ABCompanion";
+    headers["x-title"] = "Agent Go";
   }
   return { url, headers, model, label, source };
 }

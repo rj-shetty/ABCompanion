@@ -1,4 +1,4 @@
-// ABCompanion background service worker (ES module).
+// Agent Go background service worker (ES module).
 // Owns conversation state, routes messages between the side panel and the agent
 // loop, and mediates permission prompts.
 
@@ -84,7 +84,7 @@ function stopKeepAlive() {
 // survives a browser restart.
 // -------------------------------------------------------------------------
 const STORAGE_FULL_WARNING =
-  "Couldn't save this chat to History: ABCompanion's browser storage is full. Delete some saved chats, or turn off chat history in Settings.";
+  "Couldn't save this chat to History: Agent Go's browser storage is full. Delete some saved chats, or turn off chat history in Settings.";
 
 // One shared promise rather than a flag: a second handler must not run ahead
 // of the restore and then have the late restore overwrite what it set.
@@ -271,13 +271,13 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(() => {});
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
-      id: "ask-abcompanion",
-      title: 'Ask ABCompanion about "%s"',
+      id: "ask-agent-go",
+      title: 'Ask Agent Go about "%s"',
       contexts: ["selection"],
     });
     chrome.contextMenus.create({
       id: "summarize-page",
-      title: "Summarize this page with ABCompanion",
+      title: "Summarize this page with Agent Go",
       contexts: ["page"],
     });
   });
@@ -345,7 +345,7 @@ async function reconcileAlarms() {
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   let task = null;
-  if (info.menuItemId === "ask-abcompanion" && info.selectionText) {
+  if (info.menuItemId === "ask-agent-go" && info.selectionText) {
     task = `Regarding this selected text from the page:\n\n"""${info.selectionText}"""\n\nPlease help me with it.`;
   } else if (info.menuItemId === "summarize-page") {
     task = "Summarize the current page for me.";
@@ -779,7 +779,7 @@ function notify(title, message) {
     chrome.notifications.create({
       type: "basic",
       iconUrl: chrome.runtime.getURL("icons/icon128.png"),
-      title: "ABCompanion — " + (title || "Scheduled task"),
+      title: "Agent Go — " + (title || "Scheduled task"),
       message: String(message || "").slice(0, 400),
     });
   } catch {

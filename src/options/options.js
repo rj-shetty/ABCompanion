@@ -505,7 +505,7 @@ async function runModelTest(provider, modelInput, btn, statusEl, opts = {}) {
     }
     let verdict = "";
     if (r.tools.status === "ok" && (r.vision.status === "ok" || r.vision.status === "warn")) {
-      verdict = `<span class="test-line ok">This model can drive ABCompanion.${r.vision.status === "ok" ? " Vision works too." : ""}</span>`;
+      verdict = `<span class="test-line ok">This model can drive Agent Go.${r.vision.status === "ok" ? " Vision works too." : ""}</span>`;
     } else if (r.tools.thinking) {
       verdict = `<span class="test-line fail">${escapeHtml(thinkingVerdict(provider, model))}</span>`;
     } else if (r.tools.status !== "ok") {

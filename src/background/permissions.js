@@ -75,7 +75,7 @@ export function evaluate(toolName, url, config, sessionGrants) {
 
   const stored = config.sitePermissions[origin];
   if (stored === "block") {
-    return { decision: "block", reason: `You have blocked ABCompanion on ${origin}.` };
+    return { decision: "block", reason: `You have blocked Agent Go on ${origin}.` };
   }
 
   const sensitive = isSensitive(url);

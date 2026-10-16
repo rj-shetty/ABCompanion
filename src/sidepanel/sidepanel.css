@@ -4,7 +4,7 @@
    The panel can shrink below its usual width, so compact breakpoints keep
    controls and popovers usable. Surface (white in light) is spent on the things you
    touch or read closely: the composer field, the user's bubbles, cards and
-   menus. The aqua-to-cyan accent follows the ABCompanion logo. */
+   menus. The aqua-to-cyan accent follows the Agent Go logo. */
 
 html {
   font-size: clamp(14px, calc(13px + 0.25vw), 16px);

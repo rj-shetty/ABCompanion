@@ -13,7 +13,7 @@ export async function connectServer(server) {
   const { result, sessionId } = await rpc(server, null, "initialize", {
     protocolVersion: PROTOCOL_VERSION,
     capabilities: {},
-    clientInfo: { name: "ABCompanion", version: "0.1" },
+    clientInfo: { name: "Agent Go", version: "0.1" },
   });
   // Best-effort "initialized" notification (some servers require it).
   await notify(server, sessionId, "notifications/initialized", {});

@@ -1,4 +1,4 @@
-// ABCompanion content script (NOT an ES module — runs in the page's isolated
+// Agent Go content script (NOT an ES module — runs in the page's isolated
 // world). It reads the page into a compact, model-friendly representation and
 // executes actions (click / type / select / scroll) by stable "ref" ids.
 //
@@ -8,8 +8,13 @@
 (function () {
   "use strict";
   // The legacy marker prevents a duplicate listener in tabs that were already open during an update.
-  if (window.__abcompanion_cs_loaded || window.__opensidekick_cs_loaded) return;
-  window.__abcompanion_cs_loaded = true;
+  if (
+    window.__agentgo_cs_loaded ||
+    window.__abcompanion_cs_loaded ||
+    window.__opensidekick_cs_loaded
+  )
+    return;
+  window.__agentgo_cs_loaded = true;
 
   const MAX_ELEMENTS = 200;
   const MAX_TEXT = 8000;
@@ -80,8 +85,8 @@
     const nodes = document.querySelectorAll(selector);
     for (const el of nodes) {
       if (elements.length >= MAX_ELEMENTS) break;
-      // Never expose ABCompanion's own on-page overlay to the model.
-      if (el.closest("#abcompanion-overlay")) continue;
+      // Never expose Agent Go's own on-page overlay to the model.
+      if (el.closest("#agent-go-overlay, #abcompanion-overlay")) continue;
       if (!isVisible(el)) continue;
       const ref = ++refCounter;
       refMap.set(ref, el);
@@ -430,14 +435,15 @@
   };
 
   function overlay(msg) {
-    const ID = "abcompanion-overlay";
+    const ID = "agent-go-overlay";
     let el = document.getElementById(ID);
     if (msg.state === "hide") {
       if (el) el.remove();
+      document.getElementById("abcompanion-overlay")?.remove();
       return { ok: true };
     }
     // Persistent marker (survives hide) so tools can confirm the overlay fired.
-    document.documentElement.setAttribute("data-abcompanion-shown", "1");
+    document.documentElement.setAttribute("data-agent-go-shown", "1");
     if (!el) {
       el = document.createElement("div");
       el.id = ID;
@@ -466,7 +472,7 @@
       document.documentElement.appendChild(el);
     }
     const label = document.getElementById(ID + "-label");
-    if (label) label.textContent = msg.label || "ABCompanion is working…";
+    if (label) label.textContent = msg.label || "Agent Go is working…";
     return { ok: true };
   }
 

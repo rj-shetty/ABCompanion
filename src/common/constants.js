@@ -1,4 +1,4 @@
-// Shared constants and defaults for ABCompanion.
+// Shared constants and defaults for Agent Go.
 // Imported by the service worker, side panel, and options page (all ES modules).
 // NOTE: the content script is NOT a module and cannot import this file — keep
 // any values it needs duplicated there intentionally.

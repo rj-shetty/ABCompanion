@@ -470,7 +470,7 @@ async function renderSiteMenu() {
   els.siteMenu.innerHTML = `
     <div class="sm-title">Site access</div>
     <div class="sm-head">${escapeHtml(origin)}</div>
-    <div class="sm-intro">Choose what ABCompanion can do on this site.</div>
+    <div class="sm-intro">Choose what Agent Go can do on this site.</div>
     ${item("allow", "Always allow", "Routine actions can run without asking.", "shield")}
     ${item("block", "Block site", "Stop the agent from acting here.", "ban")}
     ${item("clear", "Use approval setting", "Follow the Ask, Plan, or Auto choice below.", "dot")}`;
@@ -879,10 +879,10 @@ function showPermission(req) {
         ? "New site — trust it?"
         : "Allow action?";
   const intro = req.mcp
-    ? `ABCompanion wants to call the tool <strong>${escapeHtml(req.toolName || "")}</strong> on your MCP server <span class="origin">${escapeHtml(req.serverName || "")}</span>.`
+    ? `Agent Go wants to call the tool <strong>${escapeHtml(req.toolName || "")}</strong> on your MCP server <span class="origin">${escapeHtml(req.serverName || "")}</span>.`
     : req.newSite
-      ? `You're in <strong>only-allowed-sites</strong> mode and <span class="origin">${escapeHtml(req.origin)}</span> isn't on your list. ABCompanion wants to <strong>${escapeHtml(action)}</strong> here.`
-      : `ABCompanion wants to <strong>${escapeHtml(action)}</strong> on <span class="origin">${escapeHtml(req.origin)}</span>.`;
+      ? `You're in <strong>only-allowed-sites</strong> mode and <span class="origin">${escapeHtml(req.origin)}</span> isn't on your list. Agent Go wants to <strong>${escapeHtml(action)}</strong> here.`
+      : `Agent Go wants to <strong>${escapeHtml(action)}</strong> on <span class="origin">${escapeHtml(req.origin)}</span>.`;
   const alsoLabel = req.mcp ? "Allow for this session" : req.newSite ? "Trust this site" : "Always allow this site";
   el.innerHTML = `
     <h3>${title}</h3>
